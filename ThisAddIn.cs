@@ -11,8 +11,10 @@ namespace TarjimonWord
 {
     public partial class ThisAddIn
     {
+        public static Word.Application wordApp;
         private void ThisAddIn_Startup(object sender, System.EventArgs e)
         {
+            ThisAddIn.wordApp = this.Application;
         }
 
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)

@@ -7,12 +7,12 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TarjimonWord")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Word dasturi uchun qo'shimcha krill lotin tarjimon")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("GSPI")]
 [assembly: AssemblyProduct("TarjimonWord")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Developer Temur")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

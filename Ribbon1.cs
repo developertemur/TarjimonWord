@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using Microsoft.Office.Interop.Word;
+using System.Windows.Forms;
 using Microsoft.Office.Tools.Ribbon;
-using Microsoft.Office.Tools.Word;
 
 namespace TarjimonWord
 {
     public partial class Ribbon1
     {
-        public Microsoft.Office.Interop.Word.Find findObject_;
-        public object replaceAll = Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll;
-        public object missing = null;
 
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
@@ -23,16 +16,10 @@ namespace TarjimonWord
 
         private void button1_Click(object sender, RibbonControlEventArgs e)
         {
-            Microsoft.Office.Interop.Word.Application wordApp = Globals.ThisAddIn.Application;
-            var doc = wordApp.ActiveDocument;
-            findObject_ = doc.Content.Find;
             KrillToLatin();
         }
         private void button2_Click(object sender, RibbonControlEventArgs e)
         {
-            Microsoft.Office.Interop.Word.Application wordApp = Globals.ThisAddIn.Application;
-            var doc = wordApp.ActiveDocument;
-            findObject_ = doc.Content.Find;
             LotinToKrill();
         }
 
@@ -83,7 +70,7 @@ namespace TarjimonWord
             });
             var dict = new Dictionary<string, string>
             {
-                { "Q", "Қ" }, { "Ҳ", "H" },
+                { "Q", "Қ" }, { "H", "Ҳ" },
                 { "A", "А" }, { "B", "Б" }, { "V", "В" }, { "G", "Г" }, { "D", "Д" },
                 { "E", "Е" }, { "Yo", "Ё" }, { "J", "Ж" }, { "Z", "З" }, { "I", "И" },
                 { "Y", "Й" }, { "K", "К" }, { "L", "Л" }, { "M", "М" }, { "N", "Н" },
@@ -103,22 +90,31 @@ namespace TarjimonWord
                 SearchReplace(keyValue.Key, keyValue.Value);
             });
         }
-        private void SearchReplace(string find,string replace)
+        private void SearchReplace(string findTxt,string replaceTxt)
         {
-            Debug.WriteLine(find + " -> " + replace);
-            var findObject = Globals.ThisAddIn.Application.ActiveDocument.Content.Find;
-            findObject.ClearFormatting();
-            findObject.Text = find;
-            findObject.Replacement.ClearFormatting();
-            findObject.Replacement.Text = replace;
-            findObject.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
-                ref missing, ref missing, ref missing, ref missing, ref missing,
-                ref replaceAll, ref missing, ref missing, ref missing, ref missing);
+            object FindTxt = findTxt;
+            object ReplaceTxt = replaceTxt;
+            Globals.ThisAddIn.Application.ActiveDocument.Content.Find.ClearFormatting();
+            Globals.ThisAddIn.Application.ActiveDocument.Content.Find.Execute(ref FindTxt,
+                                                     ref Params.matchCase,
+                                                     ref Params.matchWholeWord,
+                                                     ref Params.matchWildCards,
+                                                     ref Params.matchSoundLike,
+                                                     ref Params.nmatchAllWordForms,
+                                                     ref Params.forward,
+                                                     ref Params.wrap,
+                                                     ref Params.format,
+                                                     ref ReplaceTxt,
+                                                     ref Params.replace,
+                                                     ref Params.matchKashida,
+                                                     ref Params.matchDiacritics,
+                                                     ref Params.matchAlefHamza,
+                                                     ref Params.matchControl);
         }
 
         private void button3_Click(object sender, RibbonControlEventArgs e)
         {
-            System.Windows.Forms.MessageBox.Show("TarjimonWord v1.0\nDeveloped by Developer Temur\nhttps://github.com/ganiyevtemur1/TarjimonWord");
+            MessageBox.Show("TarjimonWord v1.0\nDeveloped by Developer Temur\nhttps://github.com/ganiyevtemur1/TarjimonWord");
         }
     }
 }
