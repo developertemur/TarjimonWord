@@ -74,6 +74,7 @@
             // 
             this.button3.Label = "Dastur haqida";
             this.button3.Name = "button3";
+            this.button3.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.button3_Click);
             // 
             // Ribbon1
             // 

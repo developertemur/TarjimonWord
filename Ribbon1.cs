@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -11,6 +12,10 @@ namespace TarjimonWord
 {
     public partial class Ribbon1
     {
+        public Microsoft.Office.Interop.Word.Find findObject_;
+        public object replaceAll = Microsoft.Office.Interop.Word.WdReplace.wdReplaceAll;
+        public object missing = null;
+
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
 
@@ -20,30 +25,29 @@ namespace TarjimonWord
         {
             Microsoft.Office.Interop.Word.Application wordApp = Globals.ThisAddIn.Application;
             var doc = wordApp.ActiveDocument;
-            //var selection = wordApp;
-            //selection.Text=KrillToLatin(selection.Text);
-            var content = doc.Content;
-            content.Text= KrillToLatin(content.Text);
+            findObject_ = doc.Content.Find;
+            KrillToLatin();
         }
         private void button2_Click(object sender, RibbonControlEventArgs e)
         {
             Microsoft.Office.Interop.Word.Application wordApp = Globals.ThisAddIn.Application;
             var doc = wordApp.ActiveDocument;
-            var content = doc.Content;
-            content.Text = LotinToKrill(content.Text);
+            findObject_ = doc.Content.Find;
+            LotinToKrill();
         }
 
-        private string KrillToLatin(string text)
+        private void KrillToLatin()
         {
             var _dict = new Dictionary<string, string> {
                 { "Ў","O‘" }, { "ў","o‘"},{ "Ғ","G‘" }, { "ғ","g‘" },
                 { "Ҳ","H"}, { "ҳ","h"}, { "Қ","Q" }, { "қ","q" }
             };
-            var _result = string.Join("", text.Select(c => _dict.ContainsKey(c.ToString()) ? _dict[c.ToString()] : c.ToString()));
-
+            _dict.ToList().ForEach(keyValue =>
+            {
+                SearchReplace(keyValue.Key, keyValue.Value);
+            });
             var dict = new Dictionary<string, string>
             {
-                
                 { "А", "A" }, { "Б", "B" }, { "В", "V" }, { "Г", "G" }, { "Д", "D" },
                 { "Е", "E" }, { "Ё", "Yo" }, { "Ж", "J" }, { "З", "Z" }, { "И", "I" },
                 { "Й", "Y" }, { "К", "K" }, { "Л", "L" }, { "М", "M" }, { "Н", "N" },
@@ -60,9 +64,12 @@ namespace TarjimonWord
                 { "э", "e" }, { "ю", "yu" }, { "я", "ya" }
             };
 
-            return string.Join("",_result.Select(c => dict.ContainsKey(c.ToString()) ? dict[c.ToString()] : c.ToString()));
+            dict.ToList().ForEach(keyValue =>
+            {
+                SearchReplace(keyValue.Key, keyValue.Value);
+            });
         }
-        private string LotinToKrill(string text)
+        private void LotinToKrill()
         {
             var _dict = new Dictionary<string, string> {
                 {"Yo", "Ё"}, {"Ts", "Ц"}, {"Ch", "Ч"}, {"Sh", "Ш"}, {"Yu", "Ю"}, {"Ya", "Я"},{"O'","Ў"},{"O‘","Ў"},{"G'","Ғ"},{"G‘","Ғ"},
@@ -70,8 +77,10 @@ namespace TarjimonWord
                 {"yo", "ё"}, {"ts", "ц"}, {"ch", "ч"}, {"sh", "ш"}, {"yu", "ю"}, {"ya", "я"},
                 {"yO", "ё"}, {"tS", "ц"}, {"cH", "ч"}, {"sH", "ш"}, {"yU", "ю"}, {"yA", "я"}
             };
-            var _result = string.Join("", text.Select(c => _dict.ContainsKey(c.ToString()) ? _dict[c.ToString()] : c.ToString()));
-
+            _dict.ToList().ForEach(keyValue =>
+            {
+                SearchReplace(keyValue.Key, keyValue.Value);
+            });
             var dict = new Dictionary<string, string>
             {
                 { "Q", "Қ" }, { "Ҳ", "H" },
@@ -89,8 +98,27 @@ namespace TarjimonWord
                 { "u", "у" }, { "f", "ф" }, { "x", "х" }, { "ts", "ц" }, { "ch", "ч" },
                 { "sh", "ш" }, { "yu", "ю" }, { "ya", "я" }
             };
-            return new string(_result.Select(c => dict.ContainsKey(c.ToString()) ? dict[c.ToString()][0] : c).ToArray());
+            dict.ToList().ForEach(keyValue =>
+            {
+                SearchReplace(keyValue.Key, keyValue.Value);
+            });
+        }
+        private void SearchReplace(string find,string replace)
+        {
+            Debug.WriteLine(find + " -> " + replace);
+            var findObject = Globals.ThisAddIn.Application.ActiveDocument.Content.Find;
+            findObject.ClearFormatting();
+            findObject.Text = find;
+            findObject.Replacement.ClearFormatting();
+            findObject.Replacement.Text = replace;
+            findObject.Execute(ref missing, ref missing, ref missing, ref missing, ref missing,
+                ref missing, ref missing, ref missing, ref missing, ref missing,
+                ref replaceAll, ref missing, ref missing, ref missing, ref missing);
         }
 
+        private void button3_Click(object sender, RibbonControlEventArgs e)
+        {
+            System.Windows.Forms.MessageBox.Show("TarjimonWord v1.0\nDeveloped by Developer Temur\nhttps://github.com/ganiyevtemur1/TarjimonWord");
+        }
     }
 }
